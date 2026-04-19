@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: hairy-paws-postgres
+    environment:
+      POSTGRES_DB: hairy_paws
+      POSTGRES_USER: hairy_paws
+      POSTGRES_PASSWORD: hairy_paws
+    ports:
+      - "55432:5432"
+    volumes:
+      - hairy_paws_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  hairy_paws_postgres_data:

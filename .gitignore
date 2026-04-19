@@ -1,0 +1,29 @@
+# JetBrains / Rider / IntelliJ
+.idea/
+
+# Local .NET SDK / tools
+.dotnet/
+
+# Build outputs
+**/bin/
+**/obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio
+.vs/
+
+# Test results
+TestResults/
+*.trx
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

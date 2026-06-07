@@ -6,7 +6,7 @@ using HairyPaws.Domain.Visits.Entities;
 
 namespace HairyPaws.Domain.Adoption.Entities;
 
-public sealed class AdoptionRequest : Entity
+public sealed class AdoptionRequest : 
 {
     private readonly List<Visit> _visits = [];
 

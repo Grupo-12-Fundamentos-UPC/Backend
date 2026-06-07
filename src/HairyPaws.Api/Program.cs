@@ -23,6 +23,9 @@ builder.Services.AddHealthChecks()
 var app = builder.Build();
 var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "uploads");
 Directory.CreateDirectory(uploadsPath);
+var enableAcademicFeatures = app.Environment.IsDevelopment()
+    || app.Environment.IsEnvironment("Testing")
+    || app.Environment.IsEnvironment("Academic");
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseStaticFiles(new StaticFileOptions
@@ -31,15 +34,17 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/uploads"
 });
 
-if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Testing"))
+if (enableAcademicFeatures)
 {
     await app.Services.InitializeAsync();
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "Hairy Paws API v1");
-        options.RoutePrefix = string.Empty;
+        options.RoutePrefix = "swagger";
     });
+
+    app.MapGet("/", static () => Results.Redirect("/swagger")).WithTags("Documentation");
 }
 
 app.UseAuthentication();

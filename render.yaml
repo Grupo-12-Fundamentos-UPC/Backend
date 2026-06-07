@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: hairypaws-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health/ready
+    envVars:
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:10000
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Academic
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hairypaws-db
+          property: connectionString
+      - key: Jwt__Issuer
+        value: HairyPaws.Api.Academic
+      - key: Jwt__Audience
+        value: HairyPaws.Clients.Academic
+      - key: Jwt__Secret
+        generateValue: true
+      - key: Jwt__AccessTokenLifetimeMinutes
+        value: 30
+      - key: Jwt__RefreshTokenLifetimeDays
+        value: 14
+      - key: Seed__AdminUser__Email
+        value: admin@hairypaws.academic
+      - key: Seed__AdminUser__Password
+        sync: false
+      - key: Seed__AdminUser__FirstName
+        value: Academic
+      - key: Seed__AdminUser__LastName
+        value: Administrator
+
+databases:
+  - name: hairypaws-db
+    plan: free
+    databaseName: hairy_paws
+    user: hairy_paws
+    postgresMajorVersion: "17"

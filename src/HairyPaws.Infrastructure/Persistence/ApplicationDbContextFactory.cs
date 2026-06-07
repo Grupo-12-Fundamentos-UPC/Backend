@@ -15,16 +15,20 @@ public sealed class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Ap
             .SetBasePath(apiProjectPath)
             .AddJsonFile("appsettings.json", optional: false)
             .AddJsonFile("appsettings.Development.json", optional: true)
+            .AddEnvironmentVariables()
             .Build();
 
-        var connectionString = configuration.GetConnectionString("DefaultConnection")
-            ?? throw new InvalidOperationException("The default connection string is missing.");
+        var connectionString = PostgresConnectionString.Resolve(configuration);
 
         IDateTimeProvider dateTimeProvider = new SystemDateTimeProvider();
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         optionsBuilder.UseNpgsql(
             connectionString,
-            options => options.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName));
+            options =>
+            {
+                options.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
+                options.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(5), errorCodesToAdd: null);
+            });
         optionsBuilder.UseSnakeCaseNamingConvention();
 
         return new ApplicationDbContext(optionsBuilder.Options, dateTimeProvider);

@@ -179,8 +179,21 @@ public sealed class PostgresWebApplicationFactory : WebApplicationFactory<Progra
         {
             try
             {
+                if (!file.Exists)
+                {
+                    return;
+                }
+
                 file.IsReadOnly = false;
                 file.Delete();
+                return;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return;
+            }
+            catch (FileNotFoundException)
+            {
                 return;
             }
             catch (IOException) when (attempt < maxAttempts)
@@ -206,6 +219,9 @@ public sealed class PostgresWebApplicationFactory : WebApplicationFactory<Progra
             }
 
             directory.Delete(recursive: false);
+        }
+        catch (DirectoryNotFoundException)
+        {
         }
         catch (IOException)
         {

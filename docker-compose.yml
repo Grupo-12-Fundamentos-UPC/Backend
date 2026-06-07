@@ -1,7 +1,6 @@
 services:
   postgres:
     image: postgres:17-alpine
-    container_name: hairy-paws-postgres
     environment:
       POSTGRES_DB: hairy_paws
       POSTGRES_USER: hairy_paws
@@ -10,6 +9,28 @@ services:
       - "55432:5432"
     volumes:
       - hairy_paws_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hairy_paws -d hairy_paws"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: hairypaws-api:local
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://0.0.0.0:10000
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=hairy_paws;Username=hairy_paws;Password=hairy_paws;GSS Encryption Mode=Disable"
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./src/HairyPaws.Api/uploads:/app/uploads
 
 volumes:
   hairy_paws_postgres_data:

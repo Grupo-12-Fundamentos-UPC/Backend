@@ -24,8 +24,7 @@ Nombre del Producto: HairyPaws
 
 Relación de Integrantes:
 
-- .
-
+- Becerra Llempen, Fabiola Dayane
 - .
 
 - .

@@ -16,8 +16,10 @@ Servicios locales:
 - Readiness con PostgreSQL: http://localhost:10000/health/ready
 - PostgreSQL desde el host: `localhost:55432`
 - PostgreSQL desde la API en Docker: `postgres:5432`
+- Puerto interno del contenedor API: `8080`
 
 La API local usa `ConnectionStrings__DefaultConnection` apuntando al servicio `postgres` de Compose. Render no usa esta variable local; en Render la conexion sigue entrando por `DATABASE_URL`.
+Los archivos subidos se guardan en el volumen local `./src/HairyPaws.Api/uploads` mediante `Storage__UploadsPath=/app/uploads`.
 
 ## Ver logs
 

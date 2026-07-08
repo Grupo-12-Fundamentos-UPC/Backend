@@ -1,6 +1,6 @@
 using HairyPaws.Domain.Identity.Entities;
 
-namespace HairyPaws.Application.Common.Interfaces;
+namespace HairyPaws.Application.Common.Ports;
 
 public interface IJwtTokenService
 {

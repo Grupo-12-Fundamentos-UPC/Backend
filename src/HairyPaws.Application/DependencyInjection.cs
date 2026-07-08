@@ -9,7 +9,7 @@ using HairyPaws.Application.Adoption.Queries.GetMyAdoptionRequests;
 using HairyPaws.Application.Adoption.Queries.GetPetAdoptionRequests;
 using FluentValidation;
 using HairyPaws.Application.Common.CQRS;
-using HairyPaws.Application.Common.Interfaces;
+using HairyPaws.Application.Common.Ports;
 using HairyPaws.Application.Donations.Commands.CancelDonation;
 using HairyPaws.Application.Donations.Commands.ConfirmDonation;
 using HairyPaws.Application.Donations.Commands.CreateDonation;

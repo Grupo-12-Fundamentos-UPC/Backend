@@ -1,4 +1,4 @@
-using HairyPaws.Application.Common.Interfaces;
+using HairyPaws.Application.Common.Ports;
 using HairyPaws.Domain.Notifications.Entities;
 using HairyPaws.Domain.Notifications.Enums;
 

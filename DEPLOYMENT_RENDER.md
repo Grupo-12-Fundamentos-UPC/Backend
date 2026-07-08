@@ -11,7 +11,7 @@ Este documento prepara el backend Hairy Paws para un despliegue academico en Ren
 - Framework principal: ASP.NET Core Web API con controladores.
 - Estructura:
   - `src/HairyPaws.Api`: controllers, middleware, Swagger, health checks y arranque HTTP.
-  - `src/HairyPaws.Application`: casos de uso, CQRS simple, validaciones, interfaces y mapeos.
+  - `src/HairyPaws.Application`: casos de uso, CQRS simple, validaciones, puertos y mapeos.
   - `src/HairyPaws.Domain`: entidades, enums y reglas de dominio.
   - `src/HairyPaws.Infrastructure`: EF Core, PostgreSQL, migraciones, JWT, hashing, storage local y servicios.
   - `src/HairyPaws.Contracts`: DTOs de requests/responses.

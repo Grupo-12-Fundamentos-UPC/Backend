@@ -1,0 +1,67 @@
+name: hairypaws-api
+type: Microsoft.App/containerApps
+properties:
+  managedEnvironmentId: /subscriptions/SUBSCRIPTION_ID/resourceGroups/RESOURCE_GROUP/providers/Microsoft.App/managedEnvironments/MANAGED_ENVIRONMENT_NAME
+  configuration:
+    activeRevisionsMode: Single
+    ingress:
+      external: true
+      targetPort: 8080
+      transport: http
+    secrets:
+      - name: database-url
+        value: postgresql://USER:PASSWORD@HOST:5432/hairy_paws?sslmode=require
+      - name: jwt-secret
+        value: ChangeThisAcademicSecret123456789012
+      - name: seed-admin-password
+        value: Admin123!
+  template:
+    scale:
+      minReplicas: 0
+      maxReplicas: 2
+    containers:
+      - name: hairypaws-api
+        image: REGISTRY.azurecr.io/hairypaws-api:latest
+        env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Academic
+          - name: PORT
+            value: "8080"
+          - name: Deployment__EnableSwagger
+            value: "true"
+          - name: Deployment__RunMigrations
+            value: "true"
+          - name: Deployment__SeedAdmin
+            value: "true"
+          - name: Storage__UploadsPath
+            value: /tmp/hairypaws/uploads
+          - name: DATABASE_URL
+            secretRef: database-url
+          - name: Jwt__Issuer
+            value: HairyPaws.Api.Academic
+          - name: Jwt__Audience
+            value: HairyPaws.Clients.Academic
+          - name: Jwt__Secret
+            secretRef: jwt-secret
+          - name: Jwt__AccessTokenLifetimeMinutes
+            value: "30"
+          - name: Jwt__RefreshTokenLifetimeDays
+            value: "14"
+          - name: Seed__AdminUser__Email
+            value: admin@hairypaws.academic
+          - name: Seed__AdminUser__Password
+            secretRef: seed-admin-password
+          - name: Seed__AdminUser__FirstName
+            value: Academic
+          - name: Seed__AdminUser__LastName
+            value: Administrator
+        probes:
+          - type: Startup
+            httpGet:
+              path: /health/ready
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 12
+

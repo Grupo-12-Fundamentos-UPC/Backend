@@ -2,7 +2,7 @@ using HairyPaws.Application.Adoption.Common;
 using HairyPaws.Application.Common.CQRS;
 using HairyPaws.Application.Common.Audit;
 using HairyPaws.Application.Common.Exceptions;
-using HairyPaws.Application.Common.Interfaces;
+using HairyPaws.Application.Common.Ports;
 using HairyPaws.Application.Common.Mappings;
 using HairyPaws.Application.Common.Security;
 using HairyPaws.Contracts.Adoption.Responses;

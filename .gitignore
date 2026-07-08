@@ -24,6 +24,9 @@ TestResults/
 # Logs
 *.log
 
+# Local uploaded files
+src/HairyPaws.Api/uploads/
+
 # OS files
 .DS_Store
 Thumbs.db

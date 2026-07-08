@@ -1,4 +1,4 @@
-namespace HairyPaws.Application.Common.Interfaces;
+namespace HairyPaws.Application.Common.Ports;
 
 public interface IFileStorageService
 {

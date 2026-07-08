@@ -1,6 +1,6 @@
 using HairyPaws.Application.Common.CQRS;
 using HairyPaws.Application.Common.Exceptions;
-using HairyPaws.Application.Common.Interfaces;
+using HairyPaws.Application.Common.Ports;
 using Microsoft.EntityFrameworkCore;
 
 namespace HairyPaws.Application.Identity.Commands.ChangePassword;

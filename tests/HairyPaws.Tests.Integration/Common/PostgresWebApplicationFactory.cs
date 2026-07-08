@@ -1,5 +1,5 @@
 using System.Net.Http.Headers;
-using HairyPaws.Application.Common.Interfaces;
+using HairyPaws.Application.Common.Ports;
 using HairyPaws.Infrastructure.Auth;
 using HairyPaws.Infrastructure.Persistence;
 using HairyPaws.Infrastructure.Services;
@@ -18,6 +18,11 @@ namespace HairyPaws.Tests.Integration.Common;
 
 public sealed class PostgresWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
+    private readonly string _storageRoot = Path.Combine(
+        Path.GetTempPath(),
+        "hairypaws-integration-tests",
+        Guid.NewGuid().ToString("N"));
+
     private readonly PostgreSqlContainer _database = new PostgreSqlBuilder("postgres:17-alpine")
         .WithDatabase("hairy_paws_tests")
         .WithUsername("postgres")
@@ -55,7 +60,8 @@ public sealed class PostgresWebApplicationFactory : WebApplicationFactory<Progra
                 ["Seed:AdminUser:Email"] = AdminEmail,
                 ["Seed:AdminUser:Password"] = AdminPassword,
                 ["Seed:AdminUser:FirstName"] = "System",
-                ["Seed:AdminUser:LastName"] = "Administrator"
+                ["Seed:AdminUser:LastName"] = "Administrator",
+                ["Storage:UploadsPath"] = Path.Combine(_storageRoot, "uploads")
             };
 
             configurationBuilder.AddInMemoryCollection(settings);
@@ -86,6 +92,7 @@ public sealed class PostgresWebApplicationFactory : WebApplicationFactory<Progra
         }
 
         await _database.DisposeAsync();
+        DeleteStorageRoot();
     }
 
     public async Task ResetDatabaseAsync()
@@ -156,7 +163,8 @@ public sealed class PostgresWebApplicationFactory : WebApplicationFactory<Progra
     {
         using var scope = Services.CreateScope();
         var environment = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
-        var uploadsPath = Path.Combine(environment.ContentRootPath, "uploads");
+        var storageOptions = scope.ServiceProvider.GetRequiredService<IOptions<FileStorageOptions>>().Value;
+        var uploadsPath = storageOptions.GetUploadsRoot(environment.ContentRootPath);
         Directory.CreateDirectory(uploadsPath);
 
         var rootDirectory = new DirectoryInfo(uploadsPath);
@@ -222,6 +230,23 @@ public sealed class PostgresWebApplicationFactory : WebApplicationFactory<Progra
         }
         catch (DirectoryNotFoundException)
         {
+        }
+        catch (IOException)
+        {
+        }
+        catch (UnauthorizedAccessException)
+        {
+        }
+    }
+
+    private void DeleteStorageRoot()
+    {
+        try
+        {
+            if (Directory.Exists(_storageRoot))
+            {
+                Directory.Delete(_storageRoot, recursive: true);
+            }
         }
         catch (IOException)
         {

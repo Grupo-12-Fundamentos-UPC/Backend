@@ -18,9 +18,11 @@ RUN dotnet publish src/HairyPaws.Api/HairyPaws.Api.csproj -c Release -o /app/pub
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 
-ENV ASPNETCORE_URLS=http://0.0.0.0:10000
-EXPOSE 10000
+ENV PORT=8080
+EXPOSE 8080
 
 COPY --from=build /app/publish ./
+COPY docker-entrypoint.sh ./
+RUN sed -i 's/\r$//' /app/docker-entrypoint.sh && chmod +x /app/docker-entrypoint.sh
 
-ENTRYPOINT ["dotnet", "HairyPaws.Api.dll"]
+ENTRYPOINT ["/app/docker-entrypoint.sh"]

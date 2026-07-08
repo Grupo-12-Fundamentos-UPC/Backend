@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using HairyPaws.Application.Common.Interfaces;
+using HairyPaws.Application.Common.Ports;
 using Microsoft.AspNetCore.Http;
 
 namespace HairyPaws.Infrastructure.Services;

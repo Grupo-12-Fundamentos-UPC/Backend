@@ -1,6 +1,6 @@
 using HairyPaws.Domain.Notifications.Enums;
 
-namespace HairyPaws.Application.Common.Interfaces;
+namespace HairyPaws.Application.Common.Ports;
 
 public interface INotificationService
 {

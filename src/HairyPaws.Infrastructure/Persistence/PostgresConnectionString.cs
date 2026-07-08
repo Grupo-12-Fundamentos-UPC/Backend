@@ -13,8 +13,36 @@ internal static class PostgresConnectionString
             return ConvertDatabaseUrl(databaseUrl);
         }
 
+        var postgresHost = FirstConfiguredValue(configuration, "POSTGRES_HOST", "Postgres:Host");
+        if (!string.IsNullOrWhiteSpace(postgresHost))
+        {
+            return BuildFromPostgresSettings(configuration, postgresHost);
+        }
+
         return configuration.GetConnectionString("DefaultConnection")
             ?? throw new InvalidOperationException("The database connection string is missing.");
+    }
+
+    private static string BuildFromPostgresSettings(IConfiguration configuration, string host)
+    {
+        var builder = new NpgsqlConnectionStringBuilder
+        {
+            Host = host,
+            Port = GetConfiguredInt(configuration, 5432, "POSTGRES_PORT", "Postgres:Port"),
+            Database = FirstConfiguredValue(configuration, "POSTGRES_DB", "Postgres:Database")
+                ?? throw new InvalidOperationException("The PostgreSQL database name is missing."),
+            Username = FirstConfiguredValue(configuration, "POSTGRES_USER", "Postgres:Username")
+                ?? throw new InvalidOperationException("The PostgreSQL username is missing."),
+            Password = FirstConfiguredValue(configuration, "POSTGRES_PASSWORD", "Postgres:Password") ?? string.Empty
+        };
+
+        var sslMode = FirstConfiguredValue(configuration, "POSTGRES_SSL_MODE", "Postgres:SslMode");
+        if (!string.IsNullOrWhiteSpace(sslMode) && TryParseSslMode(sslMode, out var parsedSslMode))
+        {
+            builder.SslMode = parsedSslMode;
+        }
+
+        return builder.ConnectionString;
     }
 
     private static string ConvertDatabaseUrl(string databaseUrl)
@@ -87,5 +115,25 @@ internal static class PostgresConnectionString
         }
 
         return parameters;
+    }
+
+    private static string? FirstConfiguredValue(IConfiguration configuration, params string[] keys)
+    {
+        foreach (var key in keys)
+        {
+            var value = configuration[key];
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                return value;
+            }
+        }
+
+        return null;
+    }
+
+    private static int GetConfiguredInt(IConfiguration configuration, int defaultValue, params string[] keys)
+    {
+        var value = FirstConfiguredValue(configuration, keys);
+        return int.TryParse(value, out var parsedValue) ? parsedValue : defaultValue;
     }
 }

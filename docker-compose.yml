@@ -25,10 +25,14 @@ services:
         condition: service_healthy
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://0.0.0.0:10000
+      PORT: 8080
+      Deployment__EnableSwagger: "true"
+      Deployment__RunMigrations: "true"
+      Deployment__SeedAdmin: "true"
+      Storage__UploadsPath: "/app/uploads"
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=hairy_paws;Username=hairy_paws;Password=hairy_paws;GSS Encryption Mode=Disable"
     ports:
-      - "10000:10000"
+      - "10000:8080"
     volumes:
       - ./src/HairyPaws.Api/uploads:/app/uploads
 

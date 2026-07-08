@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore HairyPaws.sln
+
+      - name: Build
+        run: dotnet build HairyPaws.sln --configuration Release --no-restore
+
+      - name: Unit tests
+        run: dotnet test tests/HairyPaws.Tests.Unit/HairyPaws.Tests.Unit.csproj --configuration Release --no-build
+
+      - name: Integration tests
+        run: dotnet test tests/HairyPaws.Tests.Integration/HairyPaws.Tests.Integration.csproj --configuration Release --no-build
+
+      - name: Docker build
+        run: docker build -t hairypaws-api:ci .
+

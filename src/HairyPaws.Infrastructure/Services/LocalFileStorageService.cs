@@ -1,9 +1,10 @@
-using HairyPaws.Application.Common.Interfaces;
+using HairyPaws.Application.Common.Ports;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace HairyPaws.Infrastructure.Services;
 
-public sealed class LocalFileStorageService(IWebHostEnvironment environment) : IFileStorageService
+public sealed class LocalFileStorageService(IWebHostEnvironment environment, IOptions<FileStorageOptions> options) : IFileStorageService
 {
     public async Task<string> SaveAsync(Stream content, string fileName, CancellationToken cancellationToken)
     {
@@ -33,7 +34,7 @@ public sealed class LocalFileStorageService(IWebHostEnvironment environment) : I
         return Task.CompletedTask;
     }
 
-    private string GetUploadsRoot() => Path.Combine(environment.ContentRootPath, "uploads");
+    private string GetUploadsRoot() => options.Value.GetUploadsRoot(environment.ContentRootPath);
 
     private string ResolveFullPath(string path)
     {

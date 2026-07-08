@@ -9,7 +9,7 @@ using HairyPaws.Domain.Pets.Entities;
 using HairyPaws.Domain.Visits.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace HairyPaws.Application.Common.Interfaces;
+namespace HairyPaws.Application.Common.Ports;
 
 public interface IApplicationDbContext
 {

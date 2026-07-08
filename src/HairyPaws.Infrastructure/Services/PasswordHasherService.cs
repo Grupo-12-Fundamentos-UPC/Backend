@@ -1,4 +1,4 @@
-using HairyPaws.Application.Common.Interfaces;
+using HairyPaws.Application.Common.Ports;
 using HairyPaws.Domain.Identity.Entities;
 using Microsoft.AspNetCore.Identity;
 

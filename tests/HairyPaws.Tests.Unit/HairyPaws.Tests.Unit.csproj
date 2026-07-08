@@ -15,11 +15,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\HairyPaws.Api\HairyPaws.Api.csproj" />
     <ProjectReference Include="..\..\src\HairyPaws.Application\HairyPaws.Application.csproj" />
+    <ProjectReference Include="..\..\src\HairyPaws.Contracts\HairyPaws.Contracts.csproj" />
     <ProjectReference Include="..\..\src\HairyPaws.Domain\HairyPaws.Domain.csproj" />
+    <ProjectReference Include="..\..\src\HairyPaws.Infrastructure\HairyPaws.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

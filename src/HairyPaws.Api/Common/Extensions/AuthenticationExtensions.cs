@@ -69,5 +69,5 @@ internal sealed class JwtBearerOptionsSetup(IOptions<JwtOptions> jwtOptions)
         };
     }
 
-    public void Configure(JwtBearerOptions options) => Configure(Options.DefaultName, options);
+    public void Configure(JwtBearerOptions options) => Configure(Microsoft.Extensions.Options.Options.DefaultName, options);
 }

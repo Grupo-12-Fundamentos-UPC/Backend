@@ -1,0 +1,37 @@
+ServiceName: hairypaws-api
+SourceConfiguration:
+  AutoDeploymentsEnabled: true
+  AuthenticationConfiguration:
+    AccessRoleArn: arn:aws:iam::ACCOUNT_ID:role/service-role/AppRunnerECRAccessRole
+  ImageRepository:
+    ImageIdentifier: ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/hairypaws-api:latest
+    ImageRepositoryType: ECR
+    ImageConfiguration:
+      Port: "8080"
+      RuntimeEnvironmentVariables:
+        ASPNETCORE_ENVIRONMENT: Academic
+        PORT: "8080"
+        Deployment__EnableSwagger: "true"
+        Deployment__RunMigrations: "true"
+        Deployment__SeedAdmin: "true"
+        Storage__UploadsPath: /tmp/hairypaws/uploads
+        DATABASE_URL: postgresql://USER:PASSWORD@HOST:5432/hairy_paws?sslmode=require
+        Jwt__Issuer: HairyPaws.Api.Academic
+        Jwt__Audience: HairyPaws.Clients.Academic
+        Jwt__Secret: ChangeThisAcademicSecret123456789012
+        Jwt__AccessTokenLifetimeMinutes: "30"
+        Jwt__RefreshTokenLifetimeDays: "14"
+        Seed__AdminUser__Email: admin@hairypaws.academic
+        Seed__AdminUser__Password: Admin123!
+        Seed__AdminUser__FirstName: Academic
+        Seed__AdminUser__LastName: Administrator
+InstanceConfiguration:
+  Cpu: "0.25 vCPU"
+  Memory: "0.5 GB"
+HealthCheckConfiguration:
+  Protocol: HTTP
+  Path: /health/ready
+  Interval: 10
+  Timeout: 5
+  HealthyThreshold: 1
+  UnhealthyThreshold: 5

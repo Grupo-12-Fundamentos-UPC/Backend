@@ -1,4 +1,4 @@
-using HairyPaws.Application.Common.Interfaces;
+using HairyPaws.Application.Common.Ports;
 using HairyPaws.Contracts.Identity.Responses;
 using HairyPaws.Domain.Identity.Entities;
 

@@ -2,11 +2,14 @@ using FluentValidation.AspNetCore;
 using HairyPaws.Api.Common.Health;
 using HairyPaws.Api.Common.Extensions;
 using HairyPaws.Api.Common.Middleware;
+using HairyPaws.Api.Common.Options;
 using HairyPaws.Application;
 using HairyPaws.Infrastructure;
 using HairyPaws.Infrastructure.Persistence;
+using HairyPaws.Infrastructure.Services;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,11 +24,16 @@ builder.Services.AddHealthChecks()
     .AddCheck<DatabaseReadinessHealthCheck>("database", tags: ["ready"]);
 
 var app = builder.Build();
-var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "uploads");
+var storageOptions = app.Services.GetRequiredService<IOptions<FileStorageOptions>>().Value;
+var uploadsPath = storageOptions.GetUploadsRoot(app.Environment.ContentRootPath);
 Directory.CreateDirectory(uploadsPath);
-var enableAcademicFeatures = app.Environment.IsDevelopment()
+var deploymentOptions = builder.Configuration.GetSection(DeploymentOptions.SectionName).Get<DeploymentOptions>() ?? new DeploymentOptions();
+var enableDeveloperDefaults = app.Environment.IsDevelopment()
     || app.Environment.IsEnvironment("Testing")
     || app.Environment.IsEnvironment("Academic");
+var enableSwagger = deploymentOptions.EnableSwagger || enableDeveloperDefaults;
+var runMigrations = deploymentOptions.RunMigrations || enableDeveloperDefaults;
+var seedAdmin = deploymentOptions.SeedAdmin || enableDeveloperDefaults;
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseStaticFiles(new StaticFileOptions
@@ -34,9 +42,13 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/uploads"
 });
 
-if (enableAcademicFeatures)
+if (runMigrations || seedAdmin)
 {
-    await app.Services.InitializeAsync();
+    await app.Services.InitializeAsync(runMigrations, seedAdmin);
+}
+
+if (enableSwagger)
+{
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {

@@ -1,0 +1,60 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: hairypaws-api
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "2"
+    spec:
+      containers:
+        - image: REGION-docker.pkg.dev/PROJECT_ID/hairypaws/hairypaws-api:latest
+          ports:
+            - name: http1
+              containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Academic
+            - name: PORT
+              value: "8080"
+            - name: Deployment__EnableSwagger
+              value: "true"
+            - name: Deployment__RunMigrations
+              value: "true"
+            - name: Deployment__SeedAdmin
+              value: "true"
+            - name: Storage__UploadsPath
+              value: /tmp/hairypaws/uploads
+            - name: DATABASE_URL
+              value: postgresql://USER:PASSWORD@HOST:5432/hairy_paws?sslmode=require
+            - name: Jwt__Issuer
+              value: HairyPaws.Api.Academic
+            - name: Jwt__Audience
+              value: HairyPaws.Clients.Academic
+            - name: Jwt__Secret
+              value: ChangeThisAcademicSecret123456789012
+            - name: Jwt__AccessTokenLifetimeMinutes
+              value: "30"
+            - name: Jwt__RefreshTokenLifetimeDays
+              value: "14"
+            - name: Seed__AdminUser__Email
+              value: admin@hairypaws.academic
+            - name: Seed__AdminUser__Password
+              value: Admin123!
+            - name: Seed__AdminUser__FirstName
+              value: Academic
+            - name: Seed__AdminUser__LastName
+              value: Administrator
+          startupProbe:
+            httpGet:
+              path: /health/ready
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 10
+            failureThreshold: 12
+

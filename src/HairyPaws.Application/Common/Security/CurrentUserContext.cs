@@ -1,6 +1,6 @@
 using HairyPaws.Domain.Adoption.Entities;
 using HairyPaws.Application.Common.Exceptions;
-using HairyPaws.Application.Common.Interfaces;
+using HairyPaws.Application.Common.Ports;
 using HairyPaws.Domain.Donations.Entities;
 using HairyPaws.Domain.Events.Entities;
 using HairyPaws.Domain.Identity.Entities;
